@@ -100,6 +100,11 @@ message DeckConfig {
       ANSWER_ACTION_ANSWER_HARD = 3;
       ANSWER_ACTION_SHOW_REMINDER = 4;
     }
+    enum TimeReminder {
+      NONE = 0;
+      AFTER_QUESTION = 1;
+      AFTER_ANSWER = 2;
+    }
 
     repeated float learn_steps = 1;
     repeated float relearn_steps = 2;
@@ -145,6 +150,7 @@ message DeckConfig {
     float seconds_to_show_question = 41;
     float seconds_to_show_answer = 42;
     AnswerAction answer_action = 43;
+    TimeReminder time_reminder = 47;
     bool wait_for_audio = 44;
     bool skip_question_when_replaying_answer = 26;
 

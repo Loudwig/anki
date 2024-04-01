@@ -83,6 +83,8 @@ pub struct DeckConfSchema11 {
     seconds_to_show_answer: f32,
     #[serde(default)]
     answer_action: AnswerAction,
+    #[serde(default)]
+    time_reminder: TimeReminder,
     #[serde(default = "wait_for_audio_default")]
     wait_for_audio: bool,
     #[serde(default)]
@@ -105,6 +107,15 @@ pub enum AnswerAction {
     AnswerGood = 2,
     AnswerHard = 3,
     ShowReminder = 4,
+}
+#[derive(Serialize_repr, Deserialize_repr, Debug, PartialEq, Eq, Clone)]
+#[repr(u8)]
+#[derive(Default)]
+pub enum TimeReminder {
+    #[default]
+    None = 0,
+    AfterQuestion =1 ,
+    AfterAnswer = 2,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -279,6 +290,7 @@ impl Default for DeckConfSchema11 {
             seconds_to_show_question: 0.0,
             seconds_to_show_answer: 0.0,
             answer_action: AnswerAction::BuryCard,
+            time_reminder: TimeReminder::None,
             wait_for_audio: true,
             replayq: true,
             dynamic: false,
@@ -366,6 +378,7 @@ impl From<DeckConfSchema11> for DeckConfig {
                 seconds_to_show_question: c.seconds_to_show_question,
                 seconds_to_show_answer: c.seconds_to_show_answer,
                 answer_action: c.answer_action as i32,
+                time_reminder : c.time_reminder as i32,
                 wait_for_audio: c.wait_for_audio,
                 skip_question_when_replaying_answer: !c.replayq,
                 bury_new: c.new.bury,
@@ -424,6 +437,11 @@ impl From<DeckConfig> for DeckConfSchema11 {
             stop_timer_on_answer: i.stop_timer_on_answer,
             seconds_to_show_question: i.seconds_to_show_question,
             seconds_to_show_answer: i.seconds_to_show_answer,
+            time_reminder : match i.time_reminder { 
+                1 => TimeReminder::AfterQuestion,
+                2 => TimeReminder::AfterAnswer,
+                _ => TimeReminder::None,
+            },
             answer_action: match i.answer_action {
                 1 => AnswerAction::AnswerAgain,
                 2 => AnswerAction::AnswerGood,
@@ -510,6 +528,7 @@ static RESERVED_DECKCONF_KEYS: Set<&'static str> = phf_set! {
     "secondsToShowQuestion",
     "secondsToShowAnswer",
     "answerAction",
+    "timeReminder",
     "waitForAudio",
     "sm2Retention",
     "weightSearch",

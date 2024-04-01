@@ -443,6 +443,13 @@ deck-config-fsrs-params-optimal = The FSRS parameters currently appear to be opt
 
 deck-config-wait-for-audio = Wait for audio
 deck-config-show-reminder = Show Reminder
+
+deck-config-time-reminder-none = No Reminder
+deck-config-time-reminder-question = Reminder for the Question
+deck-config-time-reminder-answer = Reminder for the Answer
+deck-config-time-reminder = Reminder
+deck-config-time-reminder-tool-tip = help Reminder
+
 deck-config-answer-again = Answer Again
 deck-config-answer-hard = Answer Hard
 deck-config-answer-good = Answer Good

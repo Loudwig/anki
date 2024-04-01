@@ -17,7 +17,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import TitledContainer from "$lib/components/TitledContainer.svelte";
     import type { HelpItem } from "$lib/components/types";
 
-    import { answerChoices } from "./choices";
+    import { answerChoices,timeReminder } from "./choices";
     import type { DeckOptionsState } from "./lib";
     import SpinBoxFloatRow from "./SpinBoxFloatRow.svelte";
 
@@ -44,6 +44,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             title: tr.deckConfigAnswerAction(),
             help: tr.deckConfigAnswerActionTooltip(),
         },
+        timeReminder: {
+             title: tr.deckConfigTimeReminder(),
+             help: tr.deckConfigTimeReminderToolTip(),
+         },
     };
     const helpSections = Object.values(settings) as HelpItem[];
 
@@ -128,6 +132,20 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 >
                     {settings.answerAction.title}
                 </SettingTitle>
+            </EnumSelectorRow>
+        </Item>
+        <Item>
+            <EnumSelectorRow
+                bind:value={$config.timeReminder}
+                defaultValue={defaults.timeReminder}
+                choices={timeReminder()}
+            >
+            <SettingTitle
+                    on:click={() =>
+                        openHelpModal(Object.keys(settings).indexOf("timeReminder"))}
+                >
+                    {settings.timeReminder.title}
+            </SettingTitle>
             </EnumSelectorRow>
         </Item>
     </DynamicallySlottable>
