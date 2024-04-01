@@ -136,6 +136,11 @@ class AnswerAction(Enum):
     ANSWER_HARD = 3
     SHOW_REMINDER = 4
 
+class TimeExtenderInAutoUpdate(Enum): 
+    NONE = 0
+    TIME_EXTENDER_BEFORE_ANSWER = 1
+    TIME_EXTENDER_BEFORE_NEXT_QUESTION = 2
+    TIME_EXTENDER_FOR_BOTH = 3
 
 class Reviewer:
     def __init__(self, mw: AnkiQt) -> None:
@@ -158,7 +163,10 @@ class Reviewer:
         self._reps: int = None
         self._show_question_timer: QTimer | None = None
         self._show_answer_timer: QTimer | None = None
+        self._show_time_extender : QTimer | None = None
         self.auto_advance_enabled = False
+        self.MORE_TIME = False
+        self.TIME_PORTION = 0.5
         gui_hooks.av_player_did_end_playing.append(self._on_av_player_did_end_playing)
 
     def show(self) -> None:
@@ -398,19 +406,36 @@ class Reviewer:
 
     def _auto_advance_to_answer_if_enabled(self) -> None:
         self._clear_auto_advance_timers()
+        
         if self.auto_advance_enabled:
             conf = self.mw.col.decks.config_dict_for_deck_id(
                 self.card.current_deck_id()
             )
+            try:
+                time_extender_in_auto_advance = list(TimeExtenderInAutoUpdate)[conf["timeExtenderInAutoUpdate"]]
+            except IndexError:
+                time_extender_in_auto_advance = TimeExtenderInAutoUpdate.NONE
+            
             if conf["secondsToShowQuestion"]:
-                self._show_answer_timer = self.mw.progress.timer(
-                    int(conf["secondsToShowQuestion"] * 1000),
-                    self._on_show_answer_timeout,
-                    repeat=False,
-                    parent=self.mw,
-                )
-
-    def _on_show_answer_timeout(self) -> None:
+                if time_extender_in_auto_advance == TimeExtenderInAutoUpdate.TIME_EXTENDER_BEFORE_ANSWER or time_extender_in_auto_advance == TimeExtenderInAutoUpdate.TIME_EXTENDER_FOR_BOTH: 
+                    self._show_time_extender = self.mw.progress.timer(
+                        int(conf["secondsToShowQuestion"]*self.TIME_PORTION * 1000),
+                        self._show_time_extender_timeout,
+                        repeat=False,
+                        parent=self.mw,
+                    )
+                else : 
+                    self._show_answer_timer = self.mw.progress.timer(
+                        int(conf["secondsToShowQuestion"] * 1000),
+                        self._on_show_answer_timeout,
+                        repeat=False,
+                        parent=self.mw,
+                    )
+    
+    # This function allow to show the button that allow to increase time only after a certain amount of time.
+    # This function is called after (self.TIME_PORTION * "total time of auto show question/answer"
+    def _show_time_extender_timeout(self) -> None: # this function adds a button that when clicked change the global variable MORE_TIME to True
+        
         if self.card is None:
             return
         conf = self.mw.col.decks.config_dict_for_deck_id(self.card.current_deck_id())
@@ -423,7 +448,96 @@ class Reviewer:
         ):
             self.auto_advance_enabled = False
             return
-        self._showAnswer()
+        
+        conf = self.mw.col.decks.config_dict_for_deck_id(
+                self.card.current_deck_id())
+        
+        if self.state == "question" :
+            self._addMoreTimeButton(int(conf["secondsToShowQuestion"] *(1-self.TIME_PORTION)),self.state)
+            self._show_answer_timer = self.mw.progress.timer(
+                int(conf["secondsToShowQuestion"] *(1-self.TIME_PORTION) *1000),
+                self._on_show_answer_timeout,
+                repeat=False,
+                parent=self.mw,
+            )
+        elif self.state == "answer" :
+            self._addMoreTimeButton(int(conf["secondsToShowAnswer"] *(1-self.TIME_PORTION)),self.state)
+            self._show_question_timer = self.mw.progress.timer(
+                int(conf["secondsToShowAnswer"] *(1-self.TIME_PORTION) *1000),
+                self._on_show_question_timeout,
+                repeat=False,
+                parent=self.mw,
+            )
+        else : 
+            print("state is not question or answer")
+            return
+    
+    def extend_time(self) -> None:
+        self.MORE_TIME = True
+
+    # Add a button to the bottom web that when clicked change the global variable MORE_TIME to True
+    # When clicked the button will be deleted
+    def _addMoreTimeButton(self, timeRemaining: int,state) -> None: 
+        
+        if state == "question" : 
+            spanid = "ansbut"
+        else :
+            spanid = "ansbut4"
+        
+        button_html = '''
+        var newButton = document.createElement("button");
+        newButton.id = "more-time-btn";
+        newButton.innerHTML = "{}<span id='timer-span' class='stattxt'>{} : {}</span>";
+        newButton.onclick = function() {{ handleMoreTimeClick(); }};
+
+        // Find the existing middle button that is the most on the right by its ID and insert the new button after it
+        var existingButton = document.getElementById("{}");
+
+        existingButton.parentNode.insertBefore(newButton, existingButton.nextSibling);
+        var timerSpan = document.getElementById("timer-span")
+
+        // Start the timer with the specified timeRemaining and the timerSpan as the display element (could be optional)
+        startDecreasingTimer({}, timerSpan);
+        '''.format(tr.studying_more_time(),tr.studying_time_remaining_before_auto_update(),timeRemaining,spanid,timeRemaining)
+        
+        self.bottom.web.eval(button_html)
+
+    
+    def print_current_html(self):
+        # JavaScript to get the entire document's HTML
+        javascript_to_get_html = "document.documentElement.outerHTML;"
+        
+        # Execute the JavaScript and handle the result with a callback function
+        self.bottom.web.evalWithCallback(javascript_to_get_html, self.print_html)
+
+    def print_html(self, html_content):
+        # Print the HTML content to the standard output
+        print(html_content)
+    
+
+    def _on_show_answer_timeout(self) -> None:
+        # if the button is not clicked it needs to be deleted
+        self.bottom.web.eval("deleteMoreTimeButton();")
+
+        if self.card is None:
+            return
+        conf = self.mw.col.decks.config_dict_for_deck_id(self.card.current_deck_id())
+        if conf["waitForAudio"] and av_player.current_player:
+            return
+        if (
+            not self.auto_advance_enabled
+            or not self.mw.app.focusWidget()
+            or self.mw.app.focusWidget().window() != self.mw
+        ):
+            self.auto_advance_enabled = False
+            return
+        
+        # if the user wants more time redo all the process else show the answer
+        if self.MORE_TIME : 
+            self.MORE_TIME = False
+            self._auto_advance_to_answer_if_enabled()
+        else : 
+            self._showAnswer()
 
     def autoplay(self, card: Card) -> bool:
         print("use card.autoplay() instead of reviewer.autoplay(card)")
@@ -469,19 +583,36 @@ class Reviewer:
 
     def _auto_advance_to_question_if_enabled(self) -> None:
         self._clear_auto_advance_timers()
+        
         if self.auto_advance_enabled:
             conf = self.mw.col.decks.config_dict_for_deck_id(
                 self.card.current_deck_id()
             )
+            try:
+                time_extender_in_auto_advance = list(TimeExtenderInAutoUpdate)[conf["timeExtenderInAutoUpdate"]]
+            except IndexError:
+                time_extender_in_auto_advance = TimeExtenderInAutoUpdate.NONE
+            
             if conf["secondsToShowAnswer"]:
-                self._show_question_timer = self.mw.progress.timer(
-                    int(conf["secondsToShowAnswer"] * 1000),
-                    self._on_show_question_timeout,
-                    repeat=False,
-                    parent=self.mw,
-                )
+                if time_extender_in_auto_advance == TimeExtenderInAutoUpdate.TIME_EXTENDER_BEFORE_NEXT_QUESTION or time_extender_in_auto_advance == TimeExtenderInAutoUpdate.TIME_EXTENDER_FOR_BOTH: 
+                    self._show_time_extender = self.mw.progress.timer(
+                        int(conf["secondsToShowAnswer"]*self.TIME_PORTION * 1000),
+                        self._show_time_extender_timeout,
+                        repeat=False,
+                        parent=self.mw,
+                    )
+                else : 
+                    self._show_answer_timer = self.mw.progress.timer(
+                        int(conf["secondsToShowAnswer"] * 1000),
+                        self._on_show_question_timeout,
+                        repeat=False,
+                        parent=self.mw,
+                    )
 
     def _on_show_question_timeout(self) -> None:
+        # if the user didn't click the button it needs to be deleted before advandcing to the next step
+        self.bottom.web.eval("deleteMoreTimeButton();") 
+
         if self.card is None:
             return
         conf = self.mw.col.decks.config_dict_for_deck_id(self.card.current_deck_id())
@@ -494,20 +625,26 @@ class Reviewer:
         ):
             self.auto_advance_enabled = False
             return
-        try:
-            answer_action = list(AnswerAction)[conf["answerAction"]]
-        except IndexError:
-            answer_action = AnswerAction.BURY_CARD
-        if answer_action == AnswerAction.ANSWER_AGAIN:
-            self._answerCard(1)
-        elif answer_action == AnswerAction.ANSWER_HARD:
-            self._answerCard(2)
-        elif answer_action == AnswerAction.ANSWER_GOOD:
-            self._answerCard(3)
-        elif answer_action == AnswerAction.SHOW_REMINDER:
-            tooltip(tr.studying_answer_time_elapsed())
-        else:
-            self.bury_current_card()
+        
+        # if the user wants more time redo all the process else advance to the next question
+        if self.MORE_TIME :
+            self.MORE_TIME = False
+            self._auto_advance_to_question_if_enabled()
+        else : 
+            try:
+                answer_action = list(AnswerAction)[conf["answerAction"]]
+            except IndexError:
+                answer_action = AnswerAction.BURY_CARD
+            if answer_action == AnswerAction.ANSWER_AGAIN:
+                self._answerCard(1)
+            elif answer_action == AnswerAction.ANSWER_HARD:
+                self._answerCard(2)
+            elif answer_action == AnswerAction.ANSWER_GOOD:
+                self._answerCard(3)
+            elif answer_action == AnswerAction.SHOW_REMINDER:
+                tooltip(tr.studying_answer_time_elapsed())
+            else:
+                self.bury_current_card()
 
     # Answering a card
     ############################################################
@@ -648,6 +785,8 @@ class Reviewer:
     def _linkHandler(self, url: str) -> None:
         if url == "ans":
             self._getTypedAnswer()
+        if url == "extend_time":
+            self.extend_time()
         elif url.startswith("ease"):
             val: Literal[1, 2, 3, 4] = int(url[4:])  # type: ignore
             self._answerCard(val)
@@ -768,10 +907,13 @@ class Reviewer:
 <center id=outer>
 <table id=innertable width=100%% cellspacing=0 cellpadding=0>
 <tr>
+
 <td align=start valign=top class=stat>
 <button title="%(editkey)s" onclick="pycmd('edit');">%(edit)s</button></td>
+
 <td align=center valign=top id=middle>
 </td>
+
 <td align=end valign=top class=stat>
 <button title="%(morekey)s" onclick="pycmd('more');">
 %(more)s %(downArrow)s
@@ -784,6 +926,42 @@ class Reviewer:
 <script>
 time = %(time)d;
 timerStopped = false;
+function deleteMoreTimeButton() {
+    var buttonIsHere = document.getElementById('more-time-btn');
+    if (buttonIsHere) {
+        buttonIsHere.remove();
+    }
+}
+
+function handleMoreTimeClick() {
+    pycmd('extend_time');
+    deleteMoreTimeButton();
+    }
+
+function startDecreasingTimer(duration, displayElement) {
+        
+        var timer = duration;
+        var textContent = displayElement.textContent.split(":");
+        
+        var endInterval = setInterval(function () {
+            // Directly decrement the timer
+            timer--;
+
+            // Ensure the timer does not go below 0
+            if (timer < 0) {
+                timer = 0; // Stay at 0
+                clearInterval(endInterval); // Stop the timer
+            }
+
+            // Update the display element with the current timer value
+            if (textContent.length >1){
+                displayElement.textContent = textContent[0] + ": " + timer.toString();
+            }
+            else {
+                displayElement.textContent = timer.toString();
+            }
+        }, 1000);
+    }
 </script>
 """ % dict(
             edit=tr.studying_edit(),
@@ -883,10 +1061,11 @@ timerStopped = false;
                 else ""
             )
             return """
-<td align=center><button %s title="%s" data-ease="%s" onclick='pycmd("ease%d");'>\
+<td align=center><button %s title="%s" data-ease="%s" id="ansbut%s" onclick='pycmd("ease%d");'>\
 %s%s</button></td>""" % (
                 extra,
                 key,
+                i,
                 i,
                 i,
                 label,
@@ -1161,7 +1340,10 @@ timerStopped = false;
         if self._show_question_timer:
             self._show_question_timer.deleteLater()
             self._show_question_timer = None
-
+        if self._show_time_extender:
+            self._show_time_extender.deleteLater()
+            self._show_time_extender = None
+        
     def toggle_auto_advance(self) -> None:
         self.auto_advance_enabled = not self.auto_advance_enabled
         if self.auto_advance_enabled:

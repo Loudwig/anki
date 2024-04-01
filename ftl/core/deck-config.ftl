@@ -443,6 +443,14 @@ deck-config-fsrs-params-optimal = The FSRS parameters currently appear to be opt
 
 deck-config-wait-for-audio = Wait for audio
 deck-config-show-reminder = Show Reminder
+
+deck-config-time-extender-none = No time extender available
+deck-config-time-extender-before-next-question = Time extender available before auto update of next question
+deck-config-time-extender-before-answer = Time extender available before auto update of answer
+deck-config-time-extender-for-both = Time extender available before auto update of next question and answer
+deck-config-time-extender = Time extender in auto update mode
+deck-config-time-extender-tool-tip = This fonctionnality allow the user to extend the time before the auto update of the next card or answer. A button appears at half of the time of the auto update. If the user click on it it expends the time by twice.
+
 deck-config-answer-again = Answer Again
 deck-config-answer-hard = Answer Hard
 deck-config-answer-good = Answer Good

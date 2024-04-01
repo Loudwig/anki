@@ -100,6 +100,12 @@ message DeckConfig {
       ANSWER_ACTION_ANSWER_HARD = 3;
       ANSWER_ACTION_SHOW_REMINDER = 4;
     }
+    enum TimeExtenderInAutoUpdate {
+      NONE = 0;
+      TIME_EXTENDER_BEFORE_ANSWER = 1;
+      TIME_EXTENDER_BEFORE_NEXT_QUESTION = 2;
+      TIME_EXTENDER_FOR_BOTH = 3;
+    }
 
     repeated float learn_steps = 1;
     repeated float relearn_steps = 2;
@@ -145,6 +151,7 @@ message DeckConfig {
     float seconds_to_show_question = 41;
     float seconds_to_show_answer = 42;
     AnswerAction answer_action = 43;
+    TimeExtenderInAutoUpdate time_extender_in_auto_update = 47;
     bool wait_for_audio = 44;
     bool skip_question_when_replaying_answer = 26;
 
