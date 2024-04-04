@@ -448,7 +448,10 @@ deck-config-answer-hard = Answer Hard
 deck-config-answer-good = Answer Good
 deck-config-days-to-simulate = Days to simulate
 deck-config-desired-retention-below-optimal = Your desired retention is below optimal. Increasing it is recommended.
-
+deck-config-after-question-show-answer = Show answer
+deck-config-after-question-show-reminder = Show reminder
+deck-config-after-question = After question 
+deck-config-after-question-tool-tip = The action to perform after the end of the time of the question. Either show answer and auto update or just show a reminder.
 ## NO NEED TO TRANSLATE. This text is no longer used by Anki, and will be removed in the future.
 
 deck-config-bury-siblings = Bury siblings

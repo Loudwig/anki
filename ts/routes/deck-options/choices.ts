@@ -2,6 +2,7 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 import {
+    DeckConfig,
     DeckConfig_Config_AnswerAction,
     DeckConfig_Config_LeechAction,
     DeckConfig_Config_NewCardGatherPriority,
@@ -9,6 +10,7 @@ import {
     DeckConfig_Config_NewCardSortOrder,
     DeckConfig_Config_ReviewCardOrder,
     DeckConfig_Config_ReviewMix,
+    DeckConfig_Config_AfterQuestion,
 } from "@generated/anki/deck_config_pb";
 import * as tr from "@generated/ftl";
 
@@ -181,6 +183,19 @@ export function answerChoices(): Choice<DeckConfig_Config_AnswerAction>[] {
         {
             label: tr.deckConfigShowReminder(),
             value: DeckConfig_Config_AnswerAction.SHOW_REMINDER,
+        },
+    ];
+}
+
+export function afterQuestionChoices(): Choice<DeckConfig_Config_AfterQuestion>[] {
+    return [
+        {
+            label: tr.deckConfigAfterQuestionShowAnswer(),
+            value: DeckConfig_Config_AfterQuestion.SHOW_ANSWER,
+        },
+        {
+            label: tr.deckConfigAfterQuestionShowReminder(),
+            value: DeckConfig_Config_AfterQuestion.SHOW_REMINDER,
         },
     ];
 }

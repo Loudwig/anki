@@ -1,0 +1,33 @@
+thread 'main' panicked at src/tools/rustfmt/src/rustfmt_diff.rs:169:40:
+called `Result::unwrap()` on an `Err` value: Os { code: 32, kind: BrokenPipe, message: "Broken pipe" }
+stack backtrace:
+   0:        0x10ba7550b - <std::sys_common::backtrace::_print::DisplayBacktrace as core::fmt::Display>::fmt::h5bd39351f7e45ac9
+   1:        0x10bad5adb - core::fmt::write::h2aae79ef411864ed
+   2:        0x10ba69eae - std::io::Write::write_fmt::h0a03f67a14902c99
+   3:        0x10ba752e9 - std::sys_common::backtrace::print::h9cb91cd9419651e6
+   4:        0x10ba789e8 - std::panicking::panic_hook_with_disk_dump::{{closure}}::h219c8dd2d8c34763
+   5:        0x10ba786b9 - std::panicking::panic_hook_with_disk_dump::h7919ebea222168df
+   6:        0x11584ba21 - rustc_driver_impl[20e66d819212958f]::install_ice_hook::{closure#0}
+   7:        0x10ba79248 - std::panicking::rust_panic_with_hook::h0aa5f30600aaaada
+   8:        0x10ba78fdd - std::panicking::begin_panic_handler::{{closure}}::h5f29918767af7cf8
+   9:        0x10ba759e9 - std::sys_common::backtrace::__rust_end_short_backtrace::h6fe00bd5a3a0c450
+  10:        0x10ba78cfd - _rust_begin_unwind
+  11:        0x10bb01045 - core::panicking::panic_fmt::h3a24d8399de3fa3d
+  12:        0x10bb015c5 - core::result::unwrap_failed::h0250af10d3c3ed9d
+  13:        0x10abf4790 - <rustfmt_nightly[e9ff38cae7d7de4]::rustfmt_diff::OutputWriter>::writeln
+  14:        0x10abf55bc - rustfmt_nightly[e9ff38cae7d7de4]::rustfmt_diff::print_diff::<<rustfmt_nightly[e9ff38cae7d7de4]::emitter::diff::DiffEmitter as rustfmt_nightly[e9ff38cae7d7de4]::emitter::Emitter>::emit_formatted_file::{closure#0}>
+  15:        0x10abfee85 - <rustfmt_nightly[e9ff38cae7d7de4]::emitter::diff::DiffEmitter as rustfmt_nightly[e9ff38cae7d7de4]::emitter::Emitter>::emit_formatted_file
+  16:        0x10aae36d5 - rustfmt_nightly[e9ff38cae7d7de4]::source_file::write_file::<&mut std[2046db148f84fa2]::io::stdio::Stdout>
+  17:        0x10aade593 - <rustfmt_nightly[e9ff38cae7d7de4]::Session<std[2046db148f84fa2]::io::stdio::Stdout> as rustfmt_nightly[e9ff38cae7d7de4]::formatting::FormatHandler>::handle_formatted_file
+  18:        0x10aae0d9c - rustfmt_nightly[e9ff38cae7d7de4]::formatting::format_project::<rustfmt_nightly[e9ff38cae7d7de4]::Session<std[2046db148f84fa2]::io::stdio::Stdout>>
+  19:        0x10aadc421 - <scoped_tls[444273f040b5c3be]::ScopedKey<rustc_span[e1e1c036d652354e]::SessionGlobals>>::with::<<rustfmt_nightly[e9ff38cae7d7de4]::Session<std[2046db148f84fa2]::io::stdio::Stdout>>::format_input_inner::{closure#0}, core[5b74dbcb014f52b]::result::Result<rustfmt_nightly[e9ff38cae7d7de4]::FormatReport, rustfmt_nightly[e9ff38cae7d7de4]::ErrorKind>>
+  20:        0x10aad9ac6 - <scoped_tls[444273f040b5c3be]::ScopedKey<rustc_span[e1e1c036d652354e]::SessionGlobals>>::set::<rustc_span[e1e1c036d652354e]::create_session_if_not_set_then<core[5b74dbcb014f52b]::result::Result<rustfmt_nightly[e9ff38cae7d7de4]::FormatReport, rustfmt_nightly[e9ff38cae7d7de4]::ErrorKind>, <rustfmt_nightly[e9ff38cae7d7de4]::Session<std[2046db148f84fa2]::io::stdio::Stdout>>::format_input_inner::{closure#0}>::{closure#0}, core[5b74dbcb014f52b]::result::Result<rustfmt_nightly[e9ff38cae7d7de4]::FormatReport, rustfmt_nightly[e9ff38cae7d7de4]::ErrorKind>>
+  21:        0x10aade316 - <rustfmt_nightly[e9ff38cae7d7de4]::Session<std[2046db148f84fa2]::io::stdio::Stdout>>::format_input_inner
+  22:        0x10aad012b - rustfmt[bfa4e1942a0b65ee]::format_and_emit_report::<std[2046db148f84fa2]::io::stdio::Stdout>
+  23:        0x10aadd89f - <rustfmt_nightly[e9ff38cae7d7de4]::Session<std[2046db148f84fa2]::io::stdio::Stdout>>::override_config::<rustfmt[bfa4e1942a0b65ee]::format::{closure#0}, ()>
+  24:        0x10aacef45 - rustfmt[bfa4e1942a0b65ee]::execute
+  25:        0x10aaccef1 - rustfmt[bfa4e1942a0b65ee]::main
+  26:        0x10aadfbf6 - std[2046db148f84fa2]::sys_common::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  27:        0x10aae499c - std[2046db148f84fa2]::rt::lang_start::<()>::{closure#0}
+  28:        0x10ba5c14a - std::rt::lang_start_internal::h6aa9698ca072ffc0
+  29:        0x10aad0edc - _main

@@ -136,6 +136,10 @@ class AnswerAction(Enum):
     ANSWER_HARD = 3
     SHOW_REMINDER = 4
 
+class AfterQuestion(Enum): 
+    SHOW_ANSWER = 0
+    SHOW_REMINDER = 1
+
 
 class Reviewer:
     def __init__(self, mw: AnkiQt) -> None:
@@ -423,7 +427,16 @@ class Reviewer:
         ):
             self.auto_advance_enabled = False
             return
-        self._showAnswer()
+        try : 
+            after_question = list(AfterQuestion)[conf["afterQuestion"]]
+        except IndexError:
+            after_question = AfterQuestion.SHOW_ANSWER
+        
+        if after_question == AfterQuestion.SHOW_ANSWER:
+            self._showAnswer()
+        else : 
+            tooltip(tr.studying_question_time_elapsed())
+             
 
     def autoplay(self, card: Card) -> bool:
         print("use card.autoplay() instead of reviewer.autoplay(card)")
