@@ -1793,9 +1793,9 @@ dependencies = [
 
 [[package]]
 name = "fsrs"
-version = "0.5.5"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "84a04c31041078628c5ce7310be96c987bf7f33a3f8815fa0fcdb084eb31feba"
+checksum = "008fbd5019345f9066a4b5b73373151a1faf61372b469c9db14fce0abd78468f"
 dependencies = [
  "burn",
  "itertools 0.12.1",
@@ -2293,9 +2293,9 @@ dependencies = [
 
 [[package]]
 name = "h2"
-version = "0.3.24"
+version = "0.3.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb2c4422095b67ee78da96fbb51a4cc413b3b25883c7717ff7ca1ab31022c9c9"
+checksum = "81fe527a889e1532da5c525686d96d4c2e74cdd345badf8dfef9f6b39dd5f5e8"
 dependencies = [
  "bytes",
  "fnv",
