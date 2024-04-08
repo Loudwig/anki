@@ -44,7 +44,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             title: tr.deckConfigAnswerAction(),
             help: tr.deckConfigAnswerActionTooltip(),
         },
-        questionAction : {
+        questionAction: {
             title: tr.deckConfigQuestionAction(),
             help: tr.deckConfigQuestionActionToolTip(),
         },
@@ -140,12 +140,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 defaultValue={defaults.questionAction}
                 choices={questionActionChoices()}
             >
-            <SettingTitle
+                <SettingTitle
                     on:click={() =>
                         openHelpModal(Object.keys(settings).indexOf("questionAction"))}
                 >
                     {settings.questionAction.title}
-            </SettingTitle>
+                </SettingTitle>
             </EnumSelectorRow>
         </Item>
     </DynamicallySlottable>

@@ -136,7 +136,8 @@ class AnswerAction(Enum):
     ANSWER_HARD = 3
     SHOW_REMINDER = 4
 
-class QuestionAction(Enum): 
+
+class QuestionAction(Enum):
     SHOW_ANSWER = 0
     SHOW_REMINDER = 1
 
@@ -427,16 +428,15 @@ class Reviewer:
         ):
             self.auto_advance_enabled = False
             return
-        try : 
+        try:
             question_action = list(QuestionAction)[conf["questionAction"]]
         except IndexError:
             question_action = QuestionAction.SHOW_ANSWER
-        
+
         if question_action == QuestionAction.SHOW_ANSWER:
             self._showAnswer()
-        else : 
+        else:
             tooltip(tr.studying_question_time_elapsed())
-             
 
     def autoplay(self, card: Card) -> bool:
         print("use card.autoplay() instead of reviewer.autoplay(card)")

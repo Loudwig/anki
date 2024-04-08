@@ -101,9 +101,9 @@ message DeckConfig {
       ANSWER_ACTION_SHOW_REMINDER = 4;
     }
 
-    enum QuestionAction{
+    enum QuestionAction {
       QUESTION_ACTION_SHOW_ANSWER = 0;
-      QUESTION_ACTION_SHOW_REMINDER = 1 ;
+      QUESTION_ACTION_SHOW_REMINDER = 1;
     }
 
     repeated float learn_steps = 1;
