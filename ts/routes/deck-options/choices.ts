@@ -10,7 +10,7 @@ import {
     DeckConfig_Config_NewCardSortOrder,
     DeckConfig_Config_ReviewCardOrder,
     DeckConfig_Config_ReviewMix,
-    DeckConfig_Config_AfterQuestion,
+    DeckConfig_Config_QuestionAction,
 } from "@generated/anki/deck_config_pb";
 import * as tr from "@generated/ftl";
 
@@ -187,15 +187,15 @@ export function answerChoices(): Choice<DeckConfig_Config_AnswerAction>[] {
     ];
 }
 
-export function afterQuestionChoices(): Choice<DeckConfig_Config_AfterQuestion>[] {
+export function questionActionChoices(): Choice<DeckConfig_Config_QuestionAction>[] {
     return [
         {
-            label: tr.deckConfigAfterQuestionShowAnswer(),
-            value: DeckConfig_Config_AfterQuestion.SHOW_ANSWER,
+            label: tr.deckConfigQuestionActionShowAnswer(),
+            value: DeckConfig_Config_QuestionAction.SHOW_ANSWER,
         },
         {
-            label: tr.deckConfigAfterQuestionShowReminder(),
-            value: DeckConfig_Config_AfterQuestion.SHOW_REMINDER,
+            label: tr.deckConfigQuestionActionShowReminder(),
+            value: DeckConfig_Config_QuestionAction.SHOW_REMINDER,
         },
     ];
 }

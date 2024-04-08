@@ -101,9 +101,9 @@ message DeckConfig {
       ANSWER_ACTION_SHOW_REMINDER = 4;
     }
 
-    enum AfterQuestion{
-      AFTER_QUESTION_SHOW_ANSWER = 0;
-      AFTER_QUESTION_SHOW_REMINDER = 1 ;
+    enum QuestionAction{
+      QUESTION_ACTION_SHOW_ANSWER = 0;
+      QUESTION_ACTION_SHOW_REMINDER = 1 ;
     }
 
     repeated float learn_steps = 1;
@@ -145,7 +145,7 @@ message DeckConfig {
     bool disable_autoplay = 23;
     uint32 cap_answer_time_to_secs = 24;
     bool show_timer = 25;
-    AfterQuestion after_question = 36;
+    QuestionAction question_action = 36;
     bool stop_timer_on_answer = 38;
     float seconds_to_show_question = 41;
     float seconds_to_show_answer = 42;

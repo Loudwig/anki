@@ -17,7 +17,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import TitledContainer from "$lib/components/TitledContainer.svelte";
     import type { HelpItem } from "$lib/components/types";
 
-    import { answerChoices, afterQuestionChoices } from "./choices";
+    import { answerChoices, questionActionChoices } from "./choices";
     import type { DeckOptionsState } from "./lib";
     import SpinBoxFloatRow from "./SpinBoxFloatRow.svelte";
 
@@ -44,9 +44,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             title: tr.deckConfigAnswerAction(),
             help: tr.deckConfigAnswerActionTooltip(),
         },
-        afterQuestion : {
-            title: tr.deckConfigAfterQuestion(),
-            help: tr.deckConfigAfterQuestionToolTip(),
+        questionAction : {
+            title: tr.deckConfigQuestionAction(),
+            help: tr.deckConfigQuestionActionToolTip(),
         },
     };
     const helpSections = Object.values(settings) as HelpItem[];
@@ -136,15 +136,15 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </Item>
         <Item>
             <EnumSelectorRow
-                bind:value={$config.afterQuestion}
-                defaultValue={defaults.afterQuestion}
-                choices={afterQuestionChoices()}
+                bind:value={$config.questionAction}
+                defaultValue={defaults.questionAction}
+                choices={questionActionChoices()}
             >
             <SettingTitle
                     on:click={() =>
-                        openHelpModal(Object.keys(settings).indexOf("afterQuestion"))}
+                        openHelpModal(Object.keys(settings).indexOf("questionAction"))}
                 >
-                    {settings.afterQuestion.title}
+                    {settings.questionAction.title}
             </SettingTitle>
             </EnumSelectorRow>
         </Item>

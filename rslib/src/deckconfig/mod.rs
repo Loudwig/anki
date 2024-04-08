@@ -13,7 +13,7 @@ pub use anki_proto::deck_config::deck_config::config::NewCardInsertOrder;
 pub use anki_proto::deck_config::deck_config::config::NewCardSortOrder;
 pub use anki_proto::deck_config::deck_config::config::ReviewCardOrder;
 pub use anki_proto::deck_config::deck_config::config::ReviewMix;
-pub use anki_proto::deck_config::deck_config::config::AfterQuestion;
+pub use anki_proto::deck_config::deck_config::config::QuestionAction;
 pub use anki_proto::deck_config::deck_config::Config as DeckConfigInner;
 pub use schema11::DeckConfSchema11;
 pub use schema11::NewCardOrderSchema11;
@@ -68,7 +68,7 @@ const DEFAULT_DECK_CONFIG_INNER: DeckConfigInner = DeckConfigInner {
     seconds_to_show_question: 0.0,
     seconds_to_show_answer: 0.0,
     answer_action: AnswerAction::BuryCard as i32,
-    after_question: AfterQuestion::ShowAnswer as i32,
+    question_action: QuestionAction::ShowAnswer as i32,
     wait_for_audio: true,
     skip_question_when_replaying_answer: false,
     bury_new: false,

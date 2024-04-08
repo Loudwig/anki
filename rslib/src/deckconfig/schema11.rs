@@ -84,7 +84,7 @@ pub struct DeckConfSchema11 {
     #[serde(default)]
     answer_action: AnswerAction,
     #[serde(default)]
-    after_question: AfterQuestion,
+    question_action: QuestionAction,
     #[serde(default = "wait_for_audio_default")]
     wait_for_audio: bool,
     #[serde(default)]
@@ -112,7 +112,7 @@ pub enum AnswerAction {
 #[derive(Serialize_repr, Deserialize_repr, Debug, PartialEq, Eq, Clone)]
 #[repr(u8)]
 #[derive(Default)]
-pub enum AfterQuestion {
+pub enum QuestionAction {
     #[default]
     ShowAnswer = 0,
     ShowReminder = 1,
@@ -290,7 +290,7 @@ impl Default for DeckConfSchema11 {
             seconds_to_show_question: 0.0,
             seconds_to_show_answer: 0.0,
             answer_action: AnswerAction::BuryCard,
-            after_question: AfterQuestion::ShowAnswer,
+            question_action: QuestionAction::ShowAnswer,
             wait_for_audio: true,
             replayq: true,
             dynamic: false,
@@ -377,7 +377,7 @@ impl From<DeckConfSchema11> for DeckConfig {
                 stop_timer_on_answer: c.stop_timer_on_answer,
                 seconds_to_show_question: c.seconds_to_show_question,
                 seconds_to_show_answer: c.seconds_to_show_answer,
-                after_question: c.after_question as i32,
+                question_action: c.question_action as i32,
                 answer_action: c.answer_action as i32,
                 wait_for_audio: c.wait_for_audio,
                 skip_question_when_replaying_answer: !c.replayq,
@@ -444,9 +444,9 @@ impl From<DeckConfig> for DeckConfSchema11 {
                 4 => AnswerAction::ShowReminder,
                 _ => AnswerAction::BuryCard,
             },
-            after_question: match i.after_question {
-                1 => AfterQuestion::ShowReminder,
-                _ => AfterQuestion::ShowAnswer,
+            question_action: match i.question_action {
+                1 => QuestionAction::ShowReminder,
+                _ => QuestionAction::ShowAnswer,
             },
             wait_for_audio: i.wait_for_audio,
             replayq: !i.skip_question_when_replaying_answer,
@@ -526,7 +526,7 @@ static RESERVED_DECKCONF_KEYS: Set<&'static str> = phf_set! {
     "stopTimerOnAnswer",
     "secondsToShowQuestion",
     "secondsToShowAnswer",
-    "afterQuestion",
+    "questionAction",
     "answerAction",
     "waitForAudio",
     "sm2Retention",

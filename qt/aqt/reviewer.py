@@ -136,7 +136,7 @@ class AnswerAction(Enum):
     ANSWER_HARD = 3
     SHOW_REMINDER = 4
 
-class AfterQuestion(Enum): 
+class QuestionAction(Enum): 
     SHOW_ANSWER = 0
     SHOW_REMINDER = 1
 
@@ -428,11 +428,11 @@ class Reviewer:
             self.auto_advance_enabled = False
             return
         try : 
-            after_question = list(AfterQuestion)[conf["afterQuestion"]]
+            question_action = list(QuestionAction)[conf["questionAction"]]
         except IndexError:
-            after_question = AfterQuestion.SHOW_ANSWER
+            question_action = QuestionAction.SHOW_ANSWER
         
-        if after_question == AfterQuestion.SHOW_ANSWER:
+        if question_action == QuestionAction.SHOW_ANSWER:
             self._showAnswer()
         else : 
             tooltip(tr.studying_question_time_elapsed())
