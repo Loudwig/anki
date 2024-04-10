@@ -2,7 +2,6 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 use std::ffi::OsStr;
-use std::iter::once;
 use std::process::Command;
 use std::string::FromUtf8Error;
 
@@ -97,7 +96,8 @@ impl CommandExt for Command {
 }
 
 fn get_cmdline(arg: &mut Command) -> String {
-    once(arg.get_program().to_string_lossy())
+    [arg.get_program().to_string_lossy()]
+        .into_iter()
         .chain(arg.get_args().map(|arg| arg.to_string_lossy()))
         .join(" ")
 }

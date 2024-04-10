@@ -1,7 +1,6 @@
 # Copyright: Ankitects Pty Ltd and contributors
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import os
 import platform
 import subprocess
 import sys
@@ -11,7 +10,7 @@ out_dylib, *src_files = sys.argv[1:]
 out_dir = Path(out_dylib).parent.resolve()
 src_dir = Path(src_files[0]).parent.resolve()
 
-if platform.machine() == "arm64" and not os.environ.get("MAC_X86"):
+if platform.machine() == "arm64":
     target = "arm64-apple-macos11"
 else:
     target = "x86_64-apple-macos10.14"
